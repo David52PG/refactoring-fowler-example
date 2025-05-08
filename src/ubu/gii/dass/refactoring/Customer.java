@@ -11,6 +11,9 @@ package ubu.gii.dass.refactoring;
 *
 */
 import java.util.*;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.Iterator;
 
 public class Customer {
 	private String _name;
@@ -30,34 +33,68 @@ public class Customer {
 		return _name;
 	};
 
-	public String statement() {
-		double totalAmount = 0;
-		int frequentRenterPoints = 0;
-		Iterator<Rental> rentals = _rentals.iterator();
-		String result = "Rental Record for " + getName() + "\n";
-		while (rentals.hasNext()) {
-			double thisAmount = 0;
-			Rental each = rentals.next();
-			// determine amounts for each line
-			thisAmount = calculateAmount(thisAmount, each);
-			
-			// add frequent renter points
-			frequentRenterPoints++;
-			// add bonus for a two day new release rental
-			if ((each.getMovie().getPriceCode() == Movie.NEW_RELEASE)
-					&& each.getDaysRented() > 1)
-				frequentRenterPoints++;
-			// show figures for this rental
-			result += "\t" + each.getMovie().getTitle() + "\t"
-					+ String.valueOf(thisAmount) + "\n";
-			totalAmount += thisAmount;
-		}
-		// add footer lines
-		result += "Amount owed is " + String.valueOf(totalAmount) + "\n";
-		result += "You earned " + String.valueOf(frequentRenterPoints)
-				+ " frequent renter points";
-		return result;
+	public String statement(boolean generateInHTML) {
+	    double totalAmount = 0;
+	    StringBuilder result = new StringBuilder();
+	    int frequentRenterPoints = 0;
+	    Iterator<Rental> rentals = _rentals.iterator();
+
+	    if (generateInHTML) {
+	        result.append("<h1>");
+	    }
+
+	    result.append("Rental Record for ").append(getName()).append("\n");
+
+	    if (generateInHTML) {
+	        result.append("</h1>");
+	    } else {
+	        result.append("\n");
+	    }
+
+	    while (rentals.hasNext()) {
+	        double thisAmount = 0;
+	        Rental each = rentals.next();
+	        // determine amounts for each line
+	        thisAmount = calculateAmount(thisAmount, each);
+
+	        // add frequent renter points
+	        frequentRenterPoints++;
+
+	        // add bonus for a two day new release rental
+	        if ((each.getMovie().getPriceCode() == Movie.NEW_RELEASE) && each.getDaysRented() > 1) {
+	            frequentRenterPoints++;
+	        }
+
+	        // show figures for this rental
+	        if (generateInHTML) {
+	            result.append("<h2>").append(each.getMovie().getTitle()).append("\t").append(thisAmount).append("</h2>");
+	        } else {
+	            result.append("\t").append(each.getMovie().getTitle()).append("\t").append(thisAmount).append("\n");
+	        }
+
+	        totalAmount += thisAmount;
+	    }
+
+	    // add footer lines
+	    if (generateInHTML) {
+	        result.append("<p> Amount owed is ").append(totalAmount).append("</p>");
+	        result.append("<p> You earned ").append(frequentRenterPoints).append(" frequent renter points </p>");
+	    } else {
+	        result.append("Amount owed is ").append(totalAmount).append("\n");
+	        result.append("You earned ").append(frequentRenterPoints).append(" frequent renter points");
+	    }
+
+	    if (generateInHTML) {
+	    	try (FileWriter fileWriter = new FileWriter("informe.html")) {
+		        fileWriter.write(result.toString());
+		    } catch (IOException e) {
+		        e.printStackTrace();
+		    }
+	    }
+
+	    return result.toString();
 	}
+
 
 	private double calculateAmount(double thisAmount, Rental each) {
 		switch (each.getMovie().getPriceCode()) {
