@@ -1,0 +1,21 @@
+# Mac OS
+.DS_Store
+
+# Eclipse / Java
+.classpath
+.project
+.settings/
+bin/
+target/
+*.class
+
+# IntelliJ
+.idea/
+*.iml
+
+# Archivos temporales
+*~
+*.log
+
+# Carpetas de sistema
+Thumbs.db
