@@ -5,7 +5,11 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
 import java.io.PrintStream;
+import java.nio.file.Files;
+
 
 
 /**
@@ -57,6 +61,27 @@ public class VideoClubTest {
         Movie movie = new Movie("Title", Movie.CHILDRENS);
         movie.setPriceCode(Movie.NEW_RELEASE);
         assertEquals("Debería actualizar el precio de la película.", Movie.NEW_RELEASE, movie.getPriceCode());
+    }
+
+     @Test
+    public void testHTMLStatementGeneration() throws IOException {
+        Customer customer = new Customer("HTMLClient");
+        Movie movie = new Movie("HTML Movie", Movie.NEW_RELEASE);
+        Rental rental = new Rental(movie, 3);
+        customer.addRental(rental);
+
+        customer.statement(true);
+
+        File htmlFile = new File("informe.html");
+        assertTrue("El archivo HTML debería haberse creado.", htmlFile.exists());
+
+        String content = new String(Files.readAllBytes(htmlFile.toPath()));
+        assertTrue("Debe contener etiqueta <h1>.", content.contains("<h1>"));
+        assertTrue("Debe contener el título de la película dentro de <h2>.", content.contains("<h2>HTML Movie"));
+        assertTrue("Debe mostrar el total adeudado.", content.contains("<p> Amount owed is"));
+        assertTrue("Debe mostrar puntos de cliente frecuente.", content.contains("frequent renter points"));
+
+        htmlFile.delete();
     }
 
 }
