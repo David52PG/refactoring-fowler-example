@@ -48,31 +48,15 @@ public class VideoClubTest {
         Movie movie = new Movie("Regular Movie", Movie.REGULAR);
         Rental rental = new Rental(movie, 4);
         customer.addRental(rental);
-        String statement = customer.statement();
+        String statement = customer.statement(false);
         assertTrue("Debería calcular correctamente la valoración.", statement.contains("\tRegular Movie\t5.0"));
     }
 
-<<<<<<< HEAD
-		c1.addRental(r1);
-		c1.addRental(r2);
-		c1.addRental(r3);
-
-		String salida = c1.statement(false);
-
-		String salidaEsperada = new String("Rental Record for Manuel\n"
-				+ "\tSky Captain\t15.0\n" + "\tAccion Mutante\t2.0\n"
-				+ "\tHermano Oso\t12.0\n" + "Amount owed is 29.0\n"
-				+ "You earned 4 frequent renter points");
-
-		assertTrue("Calcula mal el alquiler", salidaEsperada.equals(salida));
-	}
-=======
     @Test
     public void testSetPriceCode() {
         Movie movie = new Movie("Title", Movie.CHILDRENS);
         movie.setPriceCode(Movie.NEW_RELEASE);
         assertEquals("Debería actualizar el precio de la película.", Movie.NEW_RELEASE, movie.getPriceCode());
     }
->>>>>>> branch 'master' of git@github.com:David52PG/refactoring-fowler-example.git
 
 }
