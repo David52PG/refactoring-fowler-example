@@ -57,13 +57,7 @@ public class Customer {
 	        // determine amounts for each line
 	        thisAmount = calculateAmount(thisAmount, each);
 
-	        // add frequent renter points
-	        frequentRenterPoints++;
-
-	        // add bonus for a two day new release rental
-	        if ((each.getMovie().getPriceCode() == Movie.NEW_RELEASE) && each.getDaysRented() > 1) {
-	            frequentRenterPoints++;
-	        }
+	    	frequentRenterPoints = incrementFrequentRenterPoints(frequentRenterPoints, each);
 
 	        // show figures for this rental
 	        if (generateInHTML) {
@@ -95,7 +89,18 @@ public class Customer {
 	    return result.toString();
 	}
 
+	private int incrementFrequentRenterPoints(int frequentRenterPoints, Rental each) {
+		// add frequent renter points
+		frequentRenterPoints++;
 
+		// add bonus for a two day new release rental
+		if ((each.getMovie().getPriceCode() == Movie.NEW_RELEASE) && each.getDaysRented() > 1) {
+		    frequentRenterPoints++;
+		}
+		return frequentRenterPoints;
+	}
+
+	
 	private double calculateAmount(double thisAmount, Rental each) {
 		switch (each.getMovie().getPriceCode()) {
 		case Movie.REGULAR:
