@@ -1,10 +1,12 @@
 package ubu.gii.dass.refactoring;
 
 import static org.junit.Assert.*;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
+
 
 /**
  * Tema Refactorizaciones
@@ -18,29 +20,39 @@ import org.junit.Test;
  * 
  */
 public class VideoClubTest {
-	protected Movie m0, m11, m12, m2;
-	protected Customer c1;
-	
-	@Before
-	public void setUp() {
-		m11 = new Movie("Sky Captain", 1);
-		m12 = new Movie("Alejandro Magno", 1);
-		m0 = new Movie("Accion Mutante", 0);
-		m2 = new Movie("Hermano Oso", 2);
+    private final PrintStream originalOut = System.out;
+    private final ByteArrayOutputStream newOut = new ByteArrayOutputStream();
 
-		c1 = new Customer("Manuel");
-	}
+    @Before
+    public void setUp() {
+        // Redirect standard output to capture it.
+        System.setOut(new PrintStream(newOut));
+    }
 
-	@After
-	public void tearDown() throws Exception {}
+    @After
+    public void tearDown() {
+        // Restore original standard output.
+        System.setOut(originalOut);
+    }
 
-	@Test
-	public void testAlquiler() {
+    @Test
+    public void testVideoClubApplicationMain() {
+        VideoClubAplicacion.main(new String[0]);
+        String output = newOut.toString();
+        assertTrue("Debería imprimir el encabezado del cliente.", output.contains("Rental Record for Manuel"));
+    }
 
-		Rental r1 = new Rental(m11, 5);
-		Rental r2 = new Rental(m0, 1);
-		Rental r3 = new Rental(m2, 10);
+    @Test
+    public void testRegularBranchDaysGreaterThanTwo() {
+        Customer customer = new Customer("Test");
+        Movie movie = new Movie("Regular Movie", Movie.REGULAR);
+        Rental rental = new Rental(movie, 4);
+        customer.addRental(rental);
+        String statement = customer.statement();
+        assertTrue("Debería calcular correctamente la valoración.", statement.contains("\tRegular Movie\t5.0"));
+    }
 
+<<<<<<< HEAD
 		c1.addRental(r1);
 		c1.addRental(r2);
 		c1.addRental(r3);
@@ -54,5 +66,13 @@ public class VideoClubTest {
 
 		assertTrue("Calcula mal el alquiler", salidaEsperada.equals(salida));
 	}
+=======
+    @Test
+    public void testSetPriceCode() {
+        Movie movie = new Movie("Title", Movie.CHILDRENS);
+        movie.setPriceCode(Movie.NEW_RELEASE);
+        assertEquals("Debería actualizar el precio de la película.", Movie.NEW_RELEASE, movie.getPriceCode());
+    }
+>>>>>>> branch 'master' of git@github.com:David52PG/refactoring-fowler-example.git
 
 }
